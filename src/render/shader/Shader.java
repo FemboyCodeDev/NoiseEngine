@@ -7,6 +7,7 @@ public abstract class Shader{
     public float scale = 0.1f;
     public double x_offset;
     public double y_offset;
+    public double brightness;
 
 
     public abstract Pixel render(float x, float y);

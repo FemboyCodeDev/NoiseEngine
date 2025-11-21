@@ -36,6 +36,7 @@ public class WindowSystem extends JFrame implements KeyListener {
     public double x_position = 0;
     public double y_position = 0;
     public double scale = 1;
+    public double brightness = 100;
 
 
     public Shader shader;
@@ -65,13 +66,21 @@ public class WindowSystem extends JFrame implements KeyListener {
             direction_x -= 1;
         }
         if (key.getKeyChar() == 'e'){
-            scale = scale*2;
+            scale *= 1.2;
         }
         if (key.getKeyChar() == 'q'){
-            scale = scale*0.5;
+            scale /= 1.2;
         }
-        x_position -= direction_x*scale*5;
-        y_position -= direction_y*scale*5;
+        if (key.getKeyChar() == 'z'){
+            brightness+=1;
+        }
+        if (key.getKeyChar() == 'x'){
+            brightness-=1;
+        }
+        x_position -= (direction_x * 5) * scale;
+        y_position -= (direction_y * 5) * scale;
+
+        System.out.println(scale);
 
 
     }
@@ -181,6 +190,7 @@ public class WindowSystem extends JFrame implements KeyListener {
                         shader.x_offset = x_position;
                         shader.y_offset = y_position;
                         shader.scale = (float)scale;
+                        shader.brightness = brightness;
                         Pixel result = shader.render(normalizedX, normalizedY);
 
 

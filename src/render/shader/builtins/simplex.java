@@ -7,11 +7,14 @@ import noise.simplex2D;
 public class simplex extends Shader {
     @Override
     public Pixel render(float x, float y) {
+        //x+= x_offset;
+        //y += y_offset;
         x = x*WIDTH*scale;
         y = y*HEIGHT*scale;
+
         x+= x_offset;
         y+= y_offset;
-        float value = simplex2D.calculate(new vec2D(x,y))*100;
+        float value = simplex2D.calculate(new vec2D(x,y))*(float)brightness;
         return new Pixel((int)value,(int)value,(int)value);
 
 

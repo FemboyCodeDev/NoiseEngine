@@ -1,5 +1,7 @@
 package noise;
 
+import java.util.Random;
+
 public class simplex2D {
 
     private static final vec2D[] gradients = {
@@ -7,8 +9,26 @@ public class simplex2D {
             new vec2D(1, 0), new vec2D(-1, 0), new vec2D(0, 1), new vec2D(0, -1)
     };
 
+    private static final int[] p = new int[512];
+    static {
+        Random rand = new Random();
+        int[] permutation = new int[256];
+        for (int i = 0; i < 256; i++) {
+            permutation[i] = i;
+        }
+        for (int i = 255; i > 0; i--) {
+            int index = rand.nextInt(i + 1);
+            int temp = permutation[i];
+            permutation[i] = permutation[index];
+            permutation[index] = temp;
+        }
+        for (int i = 0; i < 256; i++) {
+            p[i] = p[i + 256] = permutation[i];
+        }
+    }
+
     private static vec2D getGradient(vec2D vertex) {
-        int hash = hashCoord(vertex);
+        int hash = hashCoord((int)Math.floor(vertex.x), (int)Math.floor(vertex.y));
         return gradients[hash & 7];
     }
 
@@ -52,18 +72,14 @@ public class simplex2D {
 
     }
 
-    public static int hashCoord(vec2D coord){
-        int x = (int)coord.x;
-        int y = (int)coord.y;
-
-        return x | (13 * y);
-
+    public static int hashCoord(int x, int y){
+        return p[(p[x & 255] + y) & 255];
     }
 
     private static float calculateContribution(vec2D input, vec2D vertex) {
         double n = 2;
         double G = (1.0 - 1.0 / Math.sqrt(n + 1.0)) / n;
-        float r_squared = 0.6f;
+        float r_squared = 0.5f;
 
         double x_unskewed = vertex.x - (vertex.x + vertex.y) * G;
         double y_unskewed = vertex.y - (vertex.x + vertex.y) * G;
@@ -89,13 +105,19 @@ public class simplex2D {
     }
 
 
-    public static float calculate(vec2D point){
+    public static float calculate(vec2D point, float scale){
+        vec2D scaledPoint = new vec2D(point.x * scale, point.y * scale);
 
-        vec2D SkewedPoint = skew(point);
+        vec2D SkewedPoint = skew(scaledPoint);
         triangle2D simplex = simplicalSubdivision(SkewedPoint);
         triangle2D gradient = GradientSelection(SkewedPoint,simplex);
-        return kernalSummation(point,gradient);
+        float value = kernalSummation(scaledPoint,gradient);
+        return (value + 1) / 2;
 
+    }
+
+    public static float calculate(vec2D point){
+        return calculate(point, 0.05f);
     }
     
     public void main(){
