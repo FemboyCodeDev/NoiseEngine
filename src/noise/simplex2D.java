@@ -7,12 +7,12 @@ public class simplex2D {
             new vec2D(1, 0), new vec2D(-1, 0), new vec2D(0, 1), new vec2D(0, -1)
     };
 
-    private vec2D getGradient(vec2D vertex) {
+    private static vec2D getGradient(vec2D vertex) {
         int hash = hashCoord(vertex);
         return gradients[hash & 7];
     }
 
-    public vec2D skew(vec2D in){
+    public static vec2D skew(vec2D in){
         double n = 2;
         double F = (Math.sqrt(n+1)-1)/n;
 
@@ -24,7 +24,7 @@ public class simplex2D {
 
     }
 
-    public triangle2D simplicalSubdivision(vec2D in){
+    public static triangle2D simplicalSubdivision(vec2D in){
         float x = in.x;
         float y = in.y;
 
@@ -35,7 +35,7 @@ public class simplex2D {
             return new triangle2D(new vec2D(0,0), new vec2D(0,1), new vec2D(1,1));
         }
     }
-    public triangle2D GradientSelection(vec2D skewedCoord, triangle2D triangle){
+    public static triangle2D GradientSelection(vec2D skewedCoord, triangle2D triangle){
         float x = skewedCoord.x;
         float y = skewedCoord.y;
 
@@ -52,7 +52,7 @@ public class simplex2D {
 
     }
 
-    public int hashCoord(vec2D coord){
+    public static int hashCoord(vec2D coord){
         int x = (int)coord.x;
         int y = (int)coord.y;
 
@@ -60,7 +60,7 @@ public class simplex2D {
 
     }
 
-    private float calculateContribution(vec2D input, vec2D vertex) {
+    private static float calculateContribution(vec2D input, vec2D vertex) {
         double n = 2;
         double G = (1.0 - 1.0 / Math.sqrt(n + 1.0)) / n;
         float r_squared = 0.6f;
@@ -80,7 +80,7 @@ public class simplex2D {
         return 0;
     }
 
-    public float kernalSummation(vec2D input, triangle2D simplex){
+    public static float kernalSummation(vec2D input, triangle2D simplex){
         float total = 0;
         total += calculateContribution(input, simplex.vert1);
         total += calculateContribution(input, simplex.vert2);
@@ -89,7 +89,7 @@ public class simplex2D {
     }
 
 
-    public float calculate(vec2D point){
+    public static float calculate(vec2D point){
 
         vec2D SkewedPoint = skew(point);
         triangle2D simplex = simplicalSubdivision(SkewedPoint);
