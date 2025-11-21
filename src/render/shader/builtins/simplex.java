@@ -9,6 +9,8 @@ public class simplex extends Shader {
     public Pixel render(float x, float y) {
         x = x*WIDTH*scale;
         y = y*HEIGHT*scale;
+        x+= x_offset;
+        y+= y_offset;
         float value = simplex2D.calculate(new vec2D(x,y))*100;
         return new Pixel((int)value,(int)value,(int)value);
 

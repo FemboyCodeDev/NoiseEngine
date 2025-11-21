@@ -2,6 +2,8 @@ package render;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -10,12 +12,12 @@ import render.shader.Pixel;
 import render.shader.Shader;
 
 /**
- * PixelProcessor.java
+ * WindowSystem.java
  * A Java Swing application that demonstrates processing every pixel
  * in a rendered window area using a BufferedImage.
  * The 'function' applied here generates a continuous color gradient.
  */
-public class PixelProcessor extends JFrame {
+public class WindowSystem extends JFrame implements KeyListener {
 
     // Define the dimensions of the internal buffer and window
     private static final int WIDTH = 800;
@@ -31,13 +33,58 @@ public class PixelProcessor extends JFrame {
     // A panel to display the image
     private final JPanel canvasPanel;
 
+    public double x_position = 0;
+    public double y_position = 0;
+    public double scale = 1;
+
 
     public Shader shader;
+    @Override
+    public void keyTyped(KeyEvent key){
+
+
+
+
+    }
+    @Override
+    public void keyPressed(KeyEvent key){
+        System.out.println(key.getKeyChar());
+
+        double direction_x = 0;
+        double direction_y = 0;
+        if (key.getKeyChar() == 'w'){
+            direction_y += 1;
+        }
+        if (key.getKeyChar() == 's'){
+            direction_y -= 1;
+        }
+        if (key.getKeyChar() == 'a'){
+            direction_x += 1;
+        }
+        if (key.getKeyChar() == 'd'){
+            direction_x -= 1;
+        }
+        if (key.getKeyChar() == 'e'){
+            scale = scale*2;
+        }
+        if (key.getKeyChar() == 'q'){
+            scale = scale*0.5;
+        }
+        x_position -= direction_x*scale*5;
+        y_position -= direction_y*scale*5;
+
+
+    }
+    @Override
+    public void keyReleased(KeyEvent key){
+
+    }
+
 
     /**
      * Constructor sets up the JFrame and the internal BufferedImage.
      */
-    public PixelProcessor() {
+    public WindowSystem() {
         // 1. Initialize the BufferedImage
         this.pixelBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -63,6 +110,8 @@ public class PixelProcessor extends JFrame {
         this.pack(); // Size the frame to fit the preferred size of the canvas
         this.setLocationRelativeTo(null); // Center the window
         this.setSize(WIDTH,HEIGHT);
+        this.setFocusable(true);
+        this.addKeyListener(this);
 
         // 4. Run the pixel processing function once initially
         processPixels(0);
@@ -128,6 +177,10 @@ public class PixelProcessor extends JFrame {
                 // --- END: CUSTOM PER-PIXEL FUNCTION ---
                 if (this.shader != null) {
                     if (shader.enabled()) {
+
+                        shader.x_offset = x_position;
+                        shader.y_offset = y_position;
+                        shader.scale = (float)scale;
                         Pixel result = shader.render(normalizedX, normalizedY);
 
 
@@ -145,12 +198,11 @@ public class PixelProcessor extends JFrame {
             }
         }
     }
-
     /**
      * Main method to start the application.
      */
     public static void main(String[] args) {
         // Run the GUI creation on the Event Dispatch Thread (EDT) for safety
-        SwingUtilities.invokeLater(() -> new PixelProcessor().setVisible(true));
+        SwingUtilities.invokeLater(() -> new WindowSystem().setVisible(true));
     }
 }

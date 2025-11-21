@@ -1,14 +1,13 @@
 
 
-import render.PixelProcessor;
-import render.shader.Shader;
+import render.WindowSystem;
 import render.shader.builtins.debugUV;
 import render.shader.builtins.simplex;
 
 import javax.swing.*;
 
 void main() {
-    PixelProcessor display = new PixelProcessor();
+    WindowSystem display = new WindowSystem();
     SwingUtilities.invokeLater(() -> display.setVisible(true));
     display.shader = new debugUV();
     display.shader = new simplex();

@@ -5,6 +5,8 @@ public abstract class Shader{
     public int WIDTH = 800;
     public int HEIGHT = 600;
     public float scale = 0.1f;
+    public double x_offset;
+    public double y_offset;
 
 
     public abstract Pixel render(float x, float y);
